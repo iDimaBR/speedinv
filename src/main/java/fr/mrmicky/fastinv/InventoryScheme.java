@@ -18,10 +18,10 @@ public class InventoryScheme {
     private char paginationChar;
 
     /**
-     * Add a mask to this scheme including all sort of characters.
-     * For example: "110101011"
+     * Add a mask to this scheme including all sorts of characters.
+     * For example, "110101011"
      *
-     * @param mask a 9 characters mask
+     * @param mask a 9-character mask
      * @return this scheme instance
      */
     public InventoryScheme mask(String mask) {
@@ -32,10 +32,10 @@ public class InventoryScheme {
     }
 
     /**
-     * Add multiples masks to this scheme including all sort of characters.
-     * For example: "111111111", "110101011", "111111111"
+     * Add multiple masks to this scheme, including all sorts of characters.
+     * For example, "111111111", "110101011", "111111111"
      *
-     * @param masks multiple 9-characters masks
+     * @param masks multiple 9-character masks
      * @return this scheme instance
      */
     public InventoryScheme masks(String... masks) {

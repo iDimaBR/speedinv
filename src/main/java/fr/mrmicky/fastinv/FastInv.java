@@ -41,7 +41,7 @@ import java.util.stream.IntStream;
  * The project is on <a href="https://github.com/MrMicky-FR/FastInv">GitHub</a>.
  *
  * @author MrMicky
- * @version 3.1.1
+ * @version 3.1.2
  */
 public class FastInv implements InventoryHolder {
 
@@ -153,7 +153,7 @@ public class FastInv implements InventoryHolder {
      * Add an {@link ItemStack} to the inventory on the first empty slot with a click handler.
      *
      * @param item    the item to add.
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void addItem(ItemStack item, Consumer<InventoryClickEvent> handler) {
         int slot = this.inventory.firstEmpty();
@@ -177,7 +177,7 @@ public class FastInv implements InventoryHolder {
      *
      * @param slot    the slot where to add the item
      * @param item    the item to add.
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> handler) {
         this.inventory.setItem(slot, item);
@@ -206,7 +206,7 @@ public class FastInv implements InventoryHolder {
      * @param slotFrom starting slot (inclusive) to put the item in
      * @param slotTo   ending slot (exclusive) to put the item in
      * @param item     the item to add
-     * @param handler  the click handler associated to these items
+     * @param handler  the click handler associated with these items
      */
     public void setItems(int slotFrom, int slotTo, ItemStack item, Consumer<InventoryClickEvent> handler) {
         for (int i = slotFrom; i < slotTo; i++) {
@@ -225,11 +225,11 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Add an {@link ItemStack} to the inventory on multiples slots with a click handler.
+     * Add an {@link ItemStack} to the inventory on multiple slots with a click handler.
      *
      * @param slots   the slots where to add the item
      * @param item    the item to add
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void setItems(int[] slots, ItemStack item, Consumer<InventoryClickEvent> handler) {
         for (int slot : slots) {
@@ -252,7 +252,7 @@ public class FastInv implements InventoryHolder {
      *
      * @param slots   the list of slots where to add the item
      * @param item    the item to add
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void setItems(Iterable<Integer> slots, ItemStack item, Consumer<InventoryClickEvent> handler) {
         for (Integer slot : slots) {

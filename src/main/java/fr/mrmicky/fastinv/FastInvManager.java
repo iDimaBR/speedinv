@@ -85,7 +85,7 @@ public final class FastInvManager {
 
                 inv.handleClick(e);
 
-                // This prevents un-canceling the event if another plugin canceled it before
+                // This prevents uncanceling the event if another plugin canceled it before
                 if (!wasCancelled && !e.isCancelled()) {
                     e.setCancelled(false);
                 }
@@ -102,7 +102,7 @@ public final class FastInvManager {
 
                 inv.handleDrag(e);
 
-                // This prevents un-canceling the event if another plugin canceled it before
+                // This prevents uncanceling the event if another plugin canceled it before
                 if (!wasCancelled && !e.isCancelled()) {
                     e.setCancelled(false);
                 }

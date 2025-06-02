@@ -6,7 +6,7 @@ Lightweight and easy-to-use inventory API for Bukkit plugins.
 
 ## Features
 
-* Lightweight (around 500 lines of code with the JavaDoc) and no dependencies
+* Lightweight (around 500 lines of code with the Javadoc) and no dependencies
 * Compatible with all Minecraft versions starting with 1.7.10
 * [Adventure components support](#adventure-components-support)
 * Supports custom inventories (size, title and type)
@@ -38,7 +38,7 @@ Lightweight and easy-to-use inventory API for Bukkit plugins.
                 <relocations>
                     <relocation>
                         <pattern>fr.mrmicky.fastinv</pattern>
-                        <!-- Replace 'com.yourpackae' with the package of your plugin ! -->
+                        <!-- Replace 'com.yourpackae' with the package of your plugin! -->
                         <shadedPattern>com.yourpackage.fastinv</shadedPattern>
                     </relocation>
                 </relocations>
@@ -58,7 +58,7 @@ Lightweight and easy-to-use inventory API for Bukkit plugins.
     <dependency>
         <groupId>fr.mrmicky</groupId>
         <artifactId>FastInv</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
     </dependency>
 </dependencies>
 ```
@@ -75,7 +75,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'fr.mrmicky:FastInv:3.1.1'
+    implementation 'fr.mrmicky:FastInv:3.1.2'
 }
 
 shadowJar {
@@ -93,7 +93,7 @@ You can also add `ItemBuilder.java` if you need.
 
 ### Register FastInv
 
-Before creating inventories, you just need to register your plugin by adding `FastInvManager.register(this);` in the `onEnable()` method of your plugin:
+Before creating inventories, register your plugin by adding `FastInvManager.register(this);` in the `onEnable()` method of your plugin:
 ```java
 @Override
 public void onEnable() {
@@ -127,7 +127,7 @@ public class ExampleInventory extends FastInv {
     public ExampleInventory() {
         super(45, ChatColor.GOLD + "Example inventory");
 
-        // Just add a random item
+        // Add a random item
         setItem(22, new ItemStack(Material.IRON_SWORD), e -> e.getWhoClicked().sendMessage("You clicked on the sword"));
 
         // Add some blocks to the borders
@@ -138,7 +138,7 @@ public class ExampleInventory extends FastInv {
             this.preventClose = !this.preventClose;
         });
 
-        // Prevent from closing when preventClose is to true
+        // Prevent from closing when preventClose is true
         setCloseFilter(p -> this.preventClose);
     }
 
@@ -196,7 +196,7 @@ public class ExamplePaginatedInventory extends PaginatedFastInv {
                     e -> e.getWhoClicked().sendMessage("You clicked on paginated item"));
         }
 
-        // The setContent method can also be used to set the index of a specific item of the paginated content
+        // The setContent method can also be used to set the index of a specific item in the paginated content
         setContent(42, new ItemStack(Material.APPLE, 42));
 
         // Non-paginated items can also still be added to the inventory if needed
@@ -236,7 +236,7 @@ inv.open(player);
 In the same way, you can also create a 'compact' paginated inventory.
 
 ### Get the FastInv instance
-You can easily get the FastInv instance from a Bukkit inventory with the holder:
+You can get the FastInv instance from a Bukkit inventory with the holder:
 ```java
 if (inventory.getHolder() instanceof FastInv) {
     FastInv fastInv = (FastInv) inventory.getHolder();

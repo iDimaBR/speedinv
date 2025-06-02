@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,6 +23,7 @@ public class PaginatedFastInv extends FastInv {
 
     private final List<ItemStack> contentItems = new ArrayList<>();
     private final List<Consumer<InventoryClickEvent>> contentHandlers = new ArrayList<>();
+    private final List<IntConsumer> pageChangeHandlers = new ArrayList<>();
 
     private List<Integer> contentSlots;
     private int page = 1;
@@ -94,7 +96,7 @@ public class PaginatedFastInv extends FastInv {
      * Add an item to the paginated content with a click handler, the item will be added to the next available slot.
      *
      * @param item    the item to add
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void addContent(ItemStack item, Consumer<InventoryClickEvent> handler) {
         this.contentItems.add(item);
@@ -115,7 +117,7 @@ public class PaginatedFastInv extends FastInv {
      * The list of click handlers must have the same size as the list of items.
      *
      * @param content  the list of items to add
-     * @param handlers the list of click handlers associated to the items
+     * @param handlers the list of click handlers associated with the items
      */
     public void addContent(Collection<ItemStack> content, Collection<Consumer<InventoryClickEvent>> handlers) {
         Objects.requireNonNull(content, "content");
@@ -144,7 +146,7 @@ public class PaginatedFastInv extends FastInv {
      *
      * @param index   the slot index
      * @param item    the item to set
-     * @param handler the click handler associated to this item
+     * @param handler the click handler associated with this item
      */
     public void setContent(int index, ItemStack item, Consumer<InventoryClickEvent> handler) {
         this.contentItems.set(index, item);
@@ -166,7 +168,7 @@ public class PaginatedFastInv extends FastInv {
      * The list of click handlers must have the same size as the list of items.
      *
      * @param content  the list of items to set
-     * @param handlers the list of click handlers associated to the items
+     * @param handlers the list of click handlers associated with the items
      */
     public void setContent(Collection<ItemStack> content, Collection<Consumer<InventoryClickEvent>> handlers) {
         Objects.requireNonNull(content, "content");
@@ -205,6 +207,14 @@ public class PaginatedFastInv extends FastInv {
     }
 
     /**
+     * Refresh the current page by reloading the content items.
+     * Equivalent to calling {@link #openPage(int)} with {@link #currentPage()}.
+     */
+    public void refreshCurrentPage() {
+        openPage(this.page);
+    }
+
+    /**
      * Replace the inventory items with the content of the specified page.
      * To open the inventory itself, use {@link #open(Player)}.
      *
@@ -239,6 +249,8 @@ public class PaginatedFastInv extends FastInv {
         }
 
         onPageChange(page);
+
+        this.pageChangeHandlers.forEach(c -> c.accept(this.page));
     }
 
     /**
@@ -357,5 +369,14 @@ public class PaginatedFastInv extends FastInv {
      */
     public boolean isLastPage() {
         return this.page == lastPage();
+    }
+
+    /**
+     * Add a handler that will be called when the page is changed.
+     *
+     * @param handler the handler to add, it will receive the new page index as parameter
+     */
+    public void addPageChangeHandler(IntConsumer handler) {
+        this.pageChangeHandlers.add(handler);
     }
 }
