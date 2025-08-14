@@ -1,6 +1,6 @@
 # FastInv
 
-[![JitPack](https://jitpack.io/v/fr.mrmicky/FastInv.svg)](https://jitpack.io/#fr.mrmicky/FastInv)
+[![JitPack](https://jitpack.io/v/fr.mrmicky/fastinv.svg)](https://jitpack.io/#fr.mrmicky/FastInv)
 
 Lightweight and easy-to-use inventory API for Bukkit plugins.
 
@@ -57,7 +57,7 @@ Lightweight and easy-to-use inventory API for Bukkit plugins.
 <dependencies>
     <dependency>
         <groupId>fr.mrmicky</groupId>
-        <artifactId>FastInv</artifactId>
+        <artifactId>fastinv</artifactId>
         <version>3.1.2</version>
     </dependency>
 </dependencies>
@@ -75,7 +75,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'fr.mrmicky:FastInv:3.1.2'
+    implementation 'fr.mrmicky:fastinv:3.1.2'
 }
 
 shadowJar {
