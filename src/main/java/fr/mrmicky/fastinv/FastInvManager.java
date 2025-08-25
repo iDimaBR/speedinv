@@ -83,8 +83,12 @@ public final class FastInvManager {
                 for (FastInv inv : UPDATABLE_INVENTORIES) {
                     long interval = inv.getAutoUpdateInterval();
                     if (interval > 0 && currentTick - inv.getLastUpdateTick() >= interval) {
-                        scheduler.runTask(plugin, inv::refreshDynamicItems);
-                        inv.setLastUpdateTick(currentTick);
+                        if (!inv.getInventory().getViewers().isEmpty()) {
+                            scheduler.runTask(plugin, () -> {
+                                inv.refreshDynamicItems();
+                                inv.setLastUpdateTick(currentTick);
+                            });
+                        }
                     }
                 }
             }
