@@ -1,4 +1,4 @@
-# FastInv
+# SpeedInv (Better fork of FastInv)
 
 [![JitPack](https://jitpack.io/v/fr.mrmicky/fastinv.svg)](https://jitpack.io/#fr.mrmicky/FastInv)
 
@@ -138,8 +138,30 @@ public class ExampleInventory extends FastInv {
             this.preventClose = !this.preventClose;
         });
 
+        setDynamicItem(24, () -> {
+            int ticks = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
+            int totalSeconds = ticks / 20;
+            int hours = totalSeconds / 3600;
+            int minutes = (totalSeconds % 3600) / 60;
+            int seconds = totalSeconds % 60;
+            
+            String timeFormatted = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            return new ItemBuilder(Material.CLOCK)
+                    .name("Online Time: " + timeFormatted)
+                    .build();
+        }, e -> p.sendMessage("You clicked on me!"));
+
         // Prevent from closing when preventClose is true
         setCloseFilter(p -> this.preventClose);
+
+        // Define autoupdate for dynamic items to true
+        setAutoUpdate(20L) // 1 second
+
+        // Define autoupdate for dynamic items to false
+        setAutoUpdate(0L); // no interval
+
+        // You can also call this method for update all dynamic items manually
+        refreshDynamicItems();
     }
 
     @Override
