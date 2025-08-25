@@ -111,8 +111,8 @@ Basic example inventory:
 ```java
 package fr.mrmicky.fastinv.test;
 
-import fr.mrmicky.fastinv.FastInv;
-import fr.mrmicky.fastinv.ItemBuilder;
+import com.github.iDimaBR.speedinv.FastInv;
+import com.github.iDimaBR.speedinv.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -144,7 +144,7 @@ public class ExampleInventory extends FastInv {
             int hours = totalSeconds / 3600;
             int minutes = (totalSeconds % 3600) / 60;
             int seconds = totalSeconds % 60;
-            
+
             String timeFormatted = String.format("%02d:%02d:%02d", hours, minutes, seconds);
             return new ItemBuilder(Material.CLOCK)
                     .name("Online Time: " + timeFormatted)
