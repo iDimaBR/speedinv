@@ -112,6 +112,7 @@ public class FastInv implements InventoryHolder {
         }
 
         this.inventory = inv;
+        FastInvManager.registerMenu(this);
     }
 
     /**

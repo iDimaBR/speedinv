@@ -35,10 +35,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -48,11 +45,41 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class FastInvManager {
 
+    private static final Map<Class<? extends FastInv>, FastInv> INVENTORIES = new HashMap<>();
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
     private static final Set<FastInv> UPDATABLE_INVENTORIES = Collections.newSetFromMap(new WeakHashMap<>());
 
     private FastInvManager() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Register a FastInv menu to be opened later using {@link #open(Class, Player)}.
+     * If the menu has an auto-update interval greater than 0, it will be automatically
+     * added to the update list.
+     *
+     * @param menu menu to register
+     * @param <T>  type of the menu
+     */
+    public static <T extends FastInv> void registerMenu(T menu) {
+        INVENTORIES.put(menu.getClass(), menu);
+        if (menu.getAutoUpdateInterval() > 0) {
+            FastInvManager.enableUpdate(menu);
+        }
+    }
+
+    /**
+     * Open a previously registered FastInv menu for a player.
+     *
+     * @param clazz  class of the menu
+     * @param player player to open the menu for
+     * @param <T>    type of the menu
+     */
+    public static <T extends FastInv> void open(Class<T> clazz, Player player) {
+        FastInv menu = INVENTORIES.get(clazz);
+        if (menu != null) {
+            menu.open(player);
+        }
     }
 
     /**
