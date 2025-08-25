@@ -102,7 +102,7 @@ public void onEnable() {
 
 private void loadInventories(){
     FastInvManager.register(this);
-    new ExampleInventory(3 * 9, "Example Inventory);
+    new ExampleInventory(3 * 9, "Example Inventory");
 }
 ```
 
