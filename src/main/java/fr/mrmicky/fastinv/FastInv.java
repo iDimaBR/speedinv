@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
@@ -46,6 +47,7 @@ import java.util.stream.IntStream;
 public class FastInv implements InventoryHolder {
 
     private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
+    private final Map<Integer, Supplier<ItemStack>> dynamicItems = new HashMap<>();
     private final List<Consumer<InventoryOpenEvent>> openHandlers = new ArrayList<>();
     private final List<Consumer<InventoryCloseEvent>> closeHandlers = new ArrayList<>();
     private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
@@ -54,6 +56,10 @@ public class FastInv implements InventoryHolder {
     private final Inventory inventory;
 
     private Predicate<Player> closeFilter;
+
+    private long autoUpdateInterval = 0L;
+    private boolean autoUpdateRegistered = false;
+    private long lastUpdateTick = 0;
 
     /**
      * Create a new FastInv with a custom size.
@@ -147,6 +153,56 @@ public class FastInv implements InventoryHolder {
      */
     public void addItem(ItemStack item) {
         addItem(item, null);
+    }
+
+    /**
+     * Add a dynamic {@link ItemStack} supplier to the inventory on a specific slot,
+     * with no click handler.
+     *
+     * @param slot     the slot where to add the item
+     * @param supplier supplier that provides the item dynamically
+     */
+    public void setDynamicItem(int slot, Supplier<ItemStack> supplier) {
+        setDynamicItem(slot, supplier, null);
+    }
+
+    /**
+     * Add a dynamic {@link ItemStack} supplier to the inventory on a specific slot,
+     * with a click handler.
+     *
+     * @param slot     the slot where to add the item
+     * @param supplier supplier that provides the item dynamically
+     * @param handler  the click handler associated with this item
+     */
+    public void setDynamicItem(int slot, Supplier<ItemStack> supplier, Consumer<InventoryClickEvent> handler) {
+        Objects.requireNonNull(supplier, "supplier");
+
+        this.dynamicItems.put(slot, supplier);
+        this.inventory.setItem(slot, supplier.get());
+
+        if (handler != null) {
+            this.itemHandlers.put(slot, handler);
+        } else {
+            this.itemHandlers.remove(slot);
+        }
+    }
+
+    /**
+     * Refresh only the dynamic items (re-fetch supplier values).
+     */
+    public void refreshDynamicItems() {
+        for (Map.Entry<Integer, Supplier<ItemStack>> e : dynamicItems.entrySet()) {
+            this.inventory.setItem(e.getKey(), e.getValue().get());
+        }
+    }
+
+    /**
+     * Remove a dynamic item from the inventory.
+     */
+    public void removeDynamicItem(int slot) {
+        this.dynamicItems.remove(slot);
+        this.inventory.clear(slot);
+        this.itemHandlers.remove(slot);
     }
 
     /**
@@ -297,6 +353,55 @@ public class FastInv implements InventoryHolder {
      */
     public void setCloseFilter(Predicate<Player> closeFilter) {
         this.closeFilter = closeFilter;
+    }
+
+    /**
+     * Set the inventory to auto-update every given interval (in ticks).
+     * Set to 0 to disable auto-updating.
+     * <p>
+     * Note: Auto-updating only refreshes dynamic items, it does not call .
+     *
+     * @param interval the update interval in ticks
+     */
+    public void setAutoUpdate(long interval) {
+        this.autoUpdateInterval = interval;
+        if (!autoUpdateRegistered && interval != 0) {
+            FastInvManager.enableUpdate(this);
+            autoUpdateRegistered = true;
+        }else{
+            FastInvManager.disableUpdate(this);
+            autoUpdateRegistered = false;
+        }
+    }
+
+    /*
+        * Get the last tick when the inventory was updated.
+     */
+    public long getLastUpdateTick() {
+        return lastUpdateTick;
+    }
+
+    /*
+        * Set the last tick when the inventory was updated.
+     */
+    public void setLastUpdateTick(long lastUpdateTick) {
+        this.lastUpdateTick = lastUpdateTick;
+    }
+
+    /**
+     * Get the auto-update interval in ticks.
+     *
+     * @return the auto-update interval
+     */
+    public long getAutoUpdateInterval() {
+        return autoUpdateInterval;
+    }
+
+    /*
+        * Check if the inventory is registered for auto-updating.
+     */
+    public boolean isAutoUpdateRegistered() {
+        return autoUpdateRegistered;
     }
 
     /**

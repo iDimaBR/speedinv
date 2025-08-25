@@ -34,7 +34,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -45,6 +48,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class FastInvManager {
 
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
+    private static final Set<FastInv> UPDATABLE_INVENTORIES = Collections.newSetFromMap(new WeakHashMap<>());
 
     private FastInvManager() {
         throw new UnsupportedOperationException();
@@ -65,6 +69,32 @@ public final class FastInvManager {
         }
 
         Bukkit.getPluginManager().registerEvents(new InventoryListener(plugin), plugin);
+        startUpdater(plugin);
+    }
+
+    private static void startUpdater(Plugin plugin) {
+        Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
+            private long currentTick = 0;
+            @Override
+            public void run() {
+                currentTick++;
+                for (FastInv inv : UPDATABLE_INVENTORIES) {
+                    long interval = inv.getAutoUpdateInterval();
+                    if (interval > 0 && currentTick - inv.getLastUpdateTick() >= interval) {
+                        inv.refreshDynamicItems();
+                        inv.setLastUpdateTick(currentTick);
+                    }
+                }
+            }
+        }, 1L, 1L);
+    }
+
+    public static void enableUpdate(FastInv inv) {
+        UPDATABLE_INVENTORIES.add(inv);
+    }
+
+    public static void disableUpdate(FastInv inv) {
+        UPDATABLE_INVENTORIES.remove(inv);
     }
 
     public static final class InventoryListener implements Listener {
@@ -85,7 +115,6 @@ public final class FastInvManager {
 
                 inv.handleClick(e);
 
-                // This prevents uncanceling the event if another plugin canceled it before
                 if (!wasCancelled && !e.isCancelled()) {
                     e.setCancelled(false);
                 }
@@ -99,10 +128,8 @@ public final class FastInvManager {
 
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
-
                 inv.handleDrag(e);
 
-                // This prevents uncanceling the event if another plugin canceled it before
                 if (!wasCancelled && !e.isCancelled()) {
                     e.setCancelled(false);
                 }
