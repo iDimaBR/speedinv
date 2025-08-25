@@ -33,6 +33,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -73,7 +74,8 @@ public final class FastInvManager {
     }
 
     private static void startUpdater(Plugin plugin) {
-        Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
+        final BukkitScheduler scheduler = Bukkit.getScheduler();
+        scheduler.runTaskTimerAsynchronously(plugin, new Runnable() {
             private long currentTick = 0;
             @Override
             public void run() {
@@ -81,7 +83,7 @@ public final class FastInvManager {
                 for (FastInv inv : UPDATABLE_INVENTORIES) {
                     long interval = inv.getAutoUpdateInterval();
                     if (interval > 0 && currentTick - inv.getLastUpdateTick() >= interval) {
-                        inv.refreshDynamicItems();
+                        scheduler.runTask(plugin, inv::refreshDynamicItems);
                         inv.setLastUpdateTick(currentTick);
                     }
                 }
