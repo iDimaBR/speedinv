@@ -52,6 +52,7 @@ public class FastInv implements InventoryHolder {
     private final List<Consumer<InventoryCloseEvent>> closeHandlers = new ArrayList<>();
     private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
     private final List<Consumer<InventoryDragEvent>> dragHandlers = new ArrayList<>();
+    private final List<Integer> allowedClickSlots = new ArrayList<>();
 
     private final Inventory inventory;
 
@@ -354,6 +355,50 @@ public class FastInv implements InventoryHolder {
      */
     public void setCloseFilter(Predicate<Player> closeFilter) {
         this.closeFilter = closeFilter;
+    }
+
+    /**
+     * Set slots where clicks are allowed.
+     */
+    public void setAllowedClickSlots(int... slots) {
+        this.allowedClickSlots.clear();
+        for (int slot : slots) {
+            this.allowedClickSlots.add(slot);
+        }
+    }
+
+    /**
+     * Add slots where clicks are allowed.
+     */
+    public void addAllowedClickSlots(int... slots) {
+        for (int slot : slots) {
+            if (!this.allowedClickSlots.contains(slot)) {
+                this.allowedClickSlots.add(slot);
+            }
+        }
+    }
+
+    /**
+     * Get the list of slots where clicks are allowed.
+     *
+     * @return the list of allowed click slots
+     */
+    public List<Integer> getAllowedClickSlots() {
+        return Collections.unmodifiableList(this.allowedClickSlots);
+    }
+
+    /**
+     * Clear the list of slots where clicks are allowed (all slots will be allowed).
+     */
+    public void clearAllowedClickSlots() {
+        this.allowedClickSlots.clear();
+    }
+
+    /**
+     * Check if a slot is in the list of allowed click slots.
+     */
+    public boolean isClickAllowed(int slot) {
+        return this.allowedClickSlots.isEmpty() || this.allowedClickSlots.contains(slot);
     }
 
     /**

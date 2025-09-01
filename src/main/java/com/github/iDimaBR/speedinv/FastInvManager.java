@@ -143,12 +143,14 @@ public final class FastInvManager {
             if (e.getInventory().getHolder() instanceof FastInv && e.getClickedInventory() != null) {
                 FastInv inv = (FastInv) e.getInventory().getHolder();
 
-                boolean wasCancelled = e.isCancelled();
-                e.setCancelled(true);
+                int slot = e.getRawSlot();
+                boolean allowed = inv.isClickAllowed(slot);
+                if (!allowed) {
+                    e.setCancelled(true);
+                }
 
                 inv.handleClick(e);
-
-                if (!wasCancelled && !e.isCancelled()) {
+                if (allowed && e.isCancelled()) {
                     e.setCancelled(false);
                 }
             }
@@ -158,12 +160,14 @@ public final class FastInvManager {
         public void onInventoryDrag(InventoryDragEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv) {
                 FastInv inv = (FastInv) e.getInventory().getHolder();
+                boolean allowed = e.getRawSlots().stream().allMatch(inv::isClickAllowed);
 
-                boolean wasCancelled = e.isCancelled();
-                e.setCancelled(true);
+                if (!allowed) {
+                    e.setCancelled(true);
+                }
+
                 inv.handleDrag(e);
-
-                if (!wasCancelled && !e.isCancelled()) {
+                if (allowed && e.isCancelled()) {
                     e.setCancelled(false);
                 }
             }
