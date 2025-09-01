@@ -141,6 +141,11 @@ public class ExampleInventory extends FastInv {
             this.preventClose = !this.preventClose;
         });
 
+        // Allow slots interaction (like 36 slot of inventory)
+        setItem(36, new ItemBuilder(Material.DIRT).name(ChatColor.RED + "Pick me").build());
+        setAllowedClickSlots(36);
+
+        // Define dynamic items for auto update
         setDynamicItem(24, () -> {
             int ticks = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
             int totalSeconds = ticks / 20;
