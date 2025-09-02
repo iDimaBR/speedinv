@@ -340,6 +340,30 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
+     * Fill all empty slots in the inventory with the given item and optional click handler.
+     * If there are no empty slots, nothing happens.
+     *
+     * @param item    The item to put in empty slots
+     * @param handler Optional click handler associated with the item
+     */
+    public void fillEmptySlots(ItemStack item, Consumer<InventoryClickEvent> handler) {
+        for (int i = 0; i < this.inventory.getSize(); i++) {
+            if (this.inventory.getItem(i) == null) {
+                setItem(i, item, handler);
+            }
+        }
+    }
+
+    /**
+     * Fill specific slots in the inventory with the given item, regardless of whether they are empty or not.
+     */
+    public void fillSlots(ItemStack item, int... slots) {
+        for (int slot : slots) {
+            setItem(slot, item);
+        }
+    }
+
+    /**
      * Clear all items from the inventory and remove the click handlers.
      */
     public void clearItems() {
@@ -504,6 +528,32 @@ public class FastInv implements InventoryHolder {
         int size = this.inventory.getSize();
         return IntStream.range(0, size).filter(i -> size < 27 || i < 9
                 || i % 9 == 0 || (i - 8) % 9 == 0 || i > size - 9).toArray();
+    }
+
+    /**
+     * Get the edges of this inventory. If the inventory size is under 27, all slots are returned.
+     */
+    public int[] getEdges() {
+        int size = this.inventory.getSize();
+        return IntStream.range(0, size).filter(i -> size < 27 || i < 9
+                || i % 9 == 0 || (i - 8) % 9 == 0 || (i > size - 10 && i < size - 8)).toArray();
+    }
+
+    /**
+     * Get the center slots of this inventory. If the inventory size is under 27, an empty array is returned.
+     */
+    public int[] getCenter() {
+        int size = this.inventory.getSize();
+        return IntStream.range(0, size).filter(i -> i > 8 && i < size - 9
+                && i % 9 != 0 && (i - 8) % 9 != 0).toArray();
+    }
+
+    /**
+     * Get all slots of this inventory.
+     */
+    public int[] getAllSlots() {
+        int size = this.inventory.getSize();
+        return IntStream.range(0, size).toArray();
     }
 
     /**
