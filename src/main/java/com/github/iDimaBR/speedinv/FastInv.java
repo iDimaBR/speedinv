@@ -53,6 +53,7 @@ public class FastInv implements InventoryHolder {
     private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
     private final List<Consumer<InventoryDragEvent>> dragHandlers = new ArrayList<>();
     private final List<Integer> allowedClickSlots = new ArrayList<>();
+    private boolean allowInventoryPlayer = false;
 
     private final Inventory inventory;
 
@@ -337,6 +338,20 @@ public class FastInv implements InventoryHolder {
         for (int slot : slots) {
             removeItem(slot);
         }
+    }
+
+    /**
+     * Define whether players are allowed to interact with their own inventory while this inventory is open.
+     */
+    public void setAllowInventoryPlayer(boolean value) {
+        this.allowInventoryPlayer = value;
+    }
+
+    /**
+     * Check whether players are allowed to interact with their own inventory while this inventory is open.
+     */
+    public boolean isAllowInventoryPlayer() {
+        return allowInventoryPlayer;
     }
 
     /**

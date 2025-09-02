@@ -143,34 +143,39 @@ public final class FastInvManager {
             if (e.getInventory().getHolder() instanceof FastInv && e.getClickedInventory() != null) {
                 FastInv inv = (FastInv) e.getInventory().getHolder();
 
-                int slot = e.getRawSlot();
-                boolean allowed = inv.isClickAllowed(slot);
-                if (!allowed) {
-                    e.setCancelled(true);
+                if (e.getClickedInventory() == e.getInventory()) {
+                    int slot = e.getRawSlot();
+                    boolean allowed = inv.isClickAllowed(slot) || e.isCancelled();
+                    if (!allowed) {
+                        e.setCancelled(true);
+                    }
+                    inv.handleClick(e);
                 }
 
-                inv.handleClick(e);
-                if (allowed && e.isCancelled()) {
-                    e.setCancelled(false);
+                if(!inv.isAllowInventoryPlayer()){
+                    if (e.getClickedInventory() == e.getWhoClicked().getInventory()) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }
 
         @EventHandler
         public void onInventoryDrag(InventoryDragEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv) {
-                FastInv inv = (FastInv) e.getInventory().getHolder();
-                boolean allowed = e.getRawSlots().stream().allMatch(inv::isClickAllowed);
+            if (!(e.getInventory().getHolder() instanceof FastInv)) return;
 
-                if (!allowed) {
-                    e.setCancelled(true);
-                }
+            FastInv inv = (FastInv) e.getInventory().getHolder();
 
-                inv.handleDrag(e);
-                if (allowed && e.isCancelled()) {
-                    e.setCancelled(false);
+            boolean cancel = false;
+            for (int slot : e.getRawSlots()) {
+                if (slot < e.getInventory().getSize()) {
+                    if (!inv.isClickAllowed(slot)) cancel = true;
+                } else if (!inv.isAllowInventoryPlayer()) {
+                    cancel = true;
                 }
             }
+
+            if (cancel) e.setCancelled(true);
         }
 
         @EventHandler
