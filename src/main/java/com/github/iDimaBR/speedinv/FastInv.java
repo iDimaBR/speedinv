@@ -37,13 +37,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-/**
- * Lightweight and easy-to-use inventory API for Bukkit plugins.
- * The project is on <a href="https://github.com/MrMicky-FR/FastInv">GitHub</a>.
- *
- * @author MrMicky
- * @version 3.1.2
- */
 public class FastInv implements InventoryHolder {
 
     private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
